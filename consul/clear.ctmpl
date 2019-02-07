@@ -1,0 +1,3 @@
+# do daily/weekly/monthly maintenance
+# min   hour    day     month   weekday command
+*/2     *       *       *       *       find /var/log/ -type f -mmin +{{key "SERVICE_KV_PATH/config/logs_TTL"}} -exec rm -rf {} \;

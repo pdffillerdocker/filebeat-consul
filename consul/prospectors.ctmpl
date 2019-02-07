@@ -1,0 +1,18 @@
+{{range $key, $pairs := tree "SERVICE_KV_PATH/CLUSTER_NAME" |byKey}}
+
+- type: log
+  paths:
+  - {{$pairs.path.Value}}
+  fields:
+   document_type: {{$pairs.doc_type.Value}}
+   index_prefix: {{with $pairs.index_prefix.Value}}{{$pairs.index_prefix.Value}}{{else}}filebeat{{end}}
+
+  {{if $pairs.json.Value }}
+  json:
+    -json.keys_under_root: true
+    -json.add_error_key: true
+    -json.message_key: message
+    {{else}}
+    {{end}}
+  scan_frequency: 10s
+  {{end}}

@@ -1,0 +1,22 @@
+#=========================== Filebeat prospectors =============================
+filebeat.config.inputs:
+  path: prospectors.d/*.yml
+  reload.enabled: true
+  reload.period: 10s
+
+#================================ General =====================================
+name: "CLUSTER_NAME"
+tags: ["CLUSTER_NAME", "json"]
+
+output.elasticsearch:
+  enabled: true
+  hosts: ["{{key "SERVICE_KV_PATH/config/es_host"}}:{{key "SERVICE_KV_PATH/config/es_port"}}"]
+  index: "SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}"
+  template.name: "filebeat"
+
+setup.template:
+  name: "SERVICE_ENV"
+  pattern: "SERVICE_ENV-*"
+
+#================================ Logging =====================================
+logging.level: debug
