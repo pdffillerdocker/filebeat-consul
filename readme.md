@@ -14,7 +14,7 @@ Filebeat configuring via Consul
 /var/log/       logs
 
 ### Visual diagram
-![](_docs/filebeat.png)
+![](https://github.com/pdffillerdocker/filebeat-consul/blob/master/_docs/filebeat.png)
 
 ### Configure the cleaner
 | Name | Description |
