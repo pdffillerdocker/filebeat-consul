@@ -127,3 +127,5 @@ curl --header "X-Consul-Token: 1234sampletoken" "http://localhost:8500/v1/kv/fil
 [Filebeat Reference](https://www.elastic.co/guide/en/beats/filebeat/current/index.html)
 
 [Consul Documentation ](https://www.consul.io/docs/index.html)
+
+pdffillerdocker/filebeat-consul is licensed under the [MIT License](https://github.com/pdffillerdocker/filebeat-consul/teamcity-docker-agent/blob/master/LICENSE)
