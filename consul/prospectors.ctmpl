@@ -1,4 +1,4 @@
-{{range $key, $pairs := tree "SERVICE_KV_PATH/CLUSTER_NAME" |byKey}}
+{{range $key, $pairs := tree "SERVICE_KV_PATH/CLUSTER_NAME/" |byKey}}
 
 - type: log
   paths:
