@@ -1,18 +1,26 @@
-{{range $key, $pairs := tree "SERVICE_KV_PATH/CLUSTER_NAME" |byKey}}
-
-- type: log
+{{ range $key,$pairs := printf "SERVICE_KV_PATH/CLUSTER_NAME" | tree | explode }}
+{{ if $pairs.type }}
+- type: {{ $pairs.type }}{{ else }}
+- type: log {{ end }}
+{{ if  $pairs.type | contains "docker" }}
+  containers:
+    path: "{{ $pairs.path }}"
+    stream: "all"
+    ids:
+      - "*"
+{{ else }}
   paths:
-  - {{$pairs.path.Value}}
+  - {{ $pairs.path }}
+{{ end }}
   fields:
-   document_type: {{$pairs.doc_type.Value}}
-   index_prefix: {{with $pairs.index_prefix.Value}}{{$pairs.index_prefix.Value}}{{else}}filebeat{{end}}
+   document_type: {{ $pairs.doc_type }}
+   index_prefix: {{ with $pairs.index_prefix }}{{ $pairs.index_prefix }}{{ else }}filebeat{{ end }}
 
-  {{if $pairs.json.Value }}
+{{ if $pairs.json }}
   json:
     -json.keys_under_root: true
     -json.add_error_key: true
     -json.message_key: message
-    {{else}}
-    {{end}}
+{{ end }}
   scan_frequency: 10s
-  {{end}}
+{{ end }}
