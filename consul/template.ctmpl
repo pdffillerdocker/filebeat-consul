@@ -4,19 +4,59 @@ filebeat.config.inputs:
   reload.enabled: true
   reload.period: 10s
 
+#=========================== Filebeat processors =============================
+
+processors:
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+
 #================================ General =====================================
 name: "CLUSTER_NAME"
 tags: ["CLUSTER_NAME", "json"]
 
 output.elasticsearch:
   enabled: true
-  hosts: ["{{key "SERVICE_KV_PATH/config/es_host"}}:{{key "SERVICE_KV_PATH/config/es_port"}}"]
-  index: "SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}"
+  hosts: 
+    - "{{ key "SERVICE_KV_PATH/config/es_host" }}:{{ key "SERVICE_KV_PATH/config/es_port" }}"
   template.name: "filebeat"
+  indices:
+    - index: "%{[beat.name]}-%{+yyyy.MM.dd}"
+      when.and:
+        - equals:
+            prospector.type: "docker"
+        - equals:
+            docker.container.labels.filebeat.enable: "true"
+        - equals:
+            docker.container.labels.service.application: "app"
+        - not:
+            equals:
+              docker.container.labels.filebeat.index: "custom"
+    - index: "SERVICE_ENV-http-%{+yyyy.MM.dd}"
+      when.and:
+        - equals:
+            prospector.type: "docker"
+        - equals:
+            docker.container.labels.filebeat.enable: "true"
+        - equals:
+            docker.container.labels.service.application: "http"
+    - index: "%{[fields.index_prefix]}-%{+yyyy.MM.dd}"
+      when.and:
+        - equals:
+            prospector.type: "docker"
+        - equals:
+            docker.container.labels.filebeat.enable: "true"
+        - equals:
+            docker.container.labels.filebeat.index: "custom"
+#### supports old fashioned log prospector type
+    - index: "SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}"
+      when.equals:
+        prospector.type: "log"
 
 setup.template:
   name: "SERVICE_ENV"
   pattern: "SERVICE_ENV-*"
 
 #================================ Logging =====================================
-logging.level: debug
+logging.level: {{ keyOrDefault "SERVICE_KV_PATH/config/debug" "info" }}
+
+
