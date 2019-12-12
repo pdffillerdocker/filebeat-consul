@@ -8,6 +8,7 @@
     stream: "all"
     ids:
       - "*"
+  
 {{ else }}
   paths:
   - {{ $pairs.path }}
@@ -23,4 +24,21 @@
     -json.message_key: message
 {{ end }}
   scan_frequency: 10s
+
+  processors:
+  # workaround for https://github.com/elastic/kibana/issues/26759
+  # when kibana fails to format a message from a log file 
+    - rename:
+         fields:
+            - from: "log"
+            - to: "message"
+  {{ if  $pairs.type | contains "docker" }}
+  # workaround when stdout and log files send to the same index (conflict of field type)
+    - rename:
+        fields:
+          - from: "json.level"
+            to: "json.level_name"
+        ignore_missing: true
+        fail_on_error: false 
+  {{ end }}
 {{ end }}
