@@ -7,7 +7,7 @@
    document_type: {{$pairs.doc_type.Value}}
    index_prefix: {{with $pairs.index_prefix.Value}}{{$pairs.index_prefix.Value}}{{else}}filebeat{{end}}
 
-  {{if $pairs.json.Value }}
+  {{if and ($pairs.json.Value) (or (eq ($pairs.json.Value | toLower) "true") (eq $pairs.json.Value "1") (eq ($pairs.json.Value | toLower) "yes") (eq ($pairs.json.Value | toLower) "y")) }}
   json:
     -json.keys_under_root: true
     -json.add_error_key: true
