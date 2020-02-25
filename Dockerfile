@@ -14,7 +14,7 @@ ENV BUILD_ID=${BUILD_ID:-"1"} \
     SERVICE_ENV="stage"
 
 # utilites version
-ENV FILEBEAT_VERSION=${FILEBEAT_VERSION:-"6.5.4"} \
+ENV FILEBEAT_VERSION=${FILEBEAT_VERSION:-"6.8.3"} \
     CONSUL_VERSION=${CONSUL_TEMPLATE_VERSION:-"0.18.1"} \
     ALPINE_GLIBC_PACKAGE_VERSION=${ALPINE_GLIBC_PACKAGE_VERSION:-"2.23-r1"} \
     ALPINE_GLIBC_BASE_URL="https://github.com/andyshinn/alpine-pkg-glibc/releases/download" \
