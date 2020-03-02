@@ -11,8 +11,13 @@ tags: ["CLUSTER_NAME", "json"]
 output.elasticsearch:
   enabled: true
   hosts: ["{{key "SERVICE_KV_PATH/config/es_host"}}:{{key "SERVICE_KV_PATH/config/es_port"}}"]
-  index: "SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}"
-  template.name: "filebeat"
+  indices:
+    - index: "SERVICE_ENV-nginx-%{+yyyy.MM.dd}"
+      when:
+        contains:
+          fields.document_type: "nginx"
+    - index: "SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}"
+      template.name: "filebeat"
 
 setup.template:
   name: "SERVICE_ENV"
