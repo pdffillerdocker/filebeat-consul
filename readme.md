@@ -9,9 +9,21 @@ Filebeat configuring via Consul
 | CONSUL_HTTP_ADDR | The consul URL | http://172.17.0.1:8500 |
 | CLUSTER_NAME | The additional subfolders in KV path for different filebit instances | ecs-cluster |
 | SERVICE_ENV | The additional prefix to elasticsearch indexname |stage|
+| INDEX_PER_CLUSTER | The additional prefix to elasticsearch indexname ||
 
 ### Mount Points
 /var/log/       logs
+
+### Index Template configuration
+| Name | Description | Default |
+|------|-------------|---------|
+| overwrite | Option to overwrite index template settings. Used if ```SERVICE_KV_PATH/config/number_of_shards``` set. ||
+| number_of_shards | Option to set number of shards per index. Used if ```SERVICE_KV_PATH/config/number_of_shards``` set. ||
+
+### Additional filebeat configuration
+| Name | Description | Default |
+|------|-------------|---------|
+| path.data | Option to set registry and meta.json directory, could be used to store filebeat state in mounted dir. Used if ```SERVICE_KV_PATH/config/fb_registry_path``` set. ||
 
 ### Visual diagram
 ![](https://raw.githubusercontent.com/pdffillerdocker/filebeat-consul/master/_docs/filebeat.png)
@@ -52,7 +64,7 @@ curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/config/es_port <<
 | Name | Description |
 |------|-------------|
 | doc_type | The value for fileds document_type |
-| index_prefix | The elasticsearch index prefix. Result elasticsearch prefix like "SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}" |
+| index_prefix | The elasticsearch index prefix. Result elasticsearch prefix like ```SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}``` or ```CLUSTER_NAME-%{[fields.index_prefix]}-%{+yyyy.MM.dd}``` if INDEX_PER_CLUSTER environment variable set to true. ```SERVICE_ENV-nginx-%{+yyyy.MM.dd}``` when document_type contains "nginx". |
 | json | Boolean value. Set true if log in json format |
 | path | The parsing file mask |
 
