@@ -40,7 +40,6 @@ RUN set -ex  && apk --no-cache add --virtual .build-dependencies wget ca-certifi
     -O /tmp/filebeat.tar.gz && \
     cd /tmp && tar xzvf filebeat.tar.gz && \
     cd filebeat-* && rm *.txt && rm *.md && cp -r * /etc/filebeat/ && \
-    cp /etc/filebeat/fields.yml /etc/filebeat/fields.reference.yml && \
     cd /tmp && rm -rf filebeat* && \
     ln -s /etc/filebeat/filebeat /usr/local/bin/filebeat && \
     chmod +x /etc/filebeat/provision/*.sh
