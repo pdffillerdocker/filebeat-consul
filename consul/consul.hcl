@@ -1,4 +1,10 @@
 template {
+  source = "/etc/filebeat/consul/fields.ctmpl"
+  destination = "/etc/filebeat/fields.yml"
+  command = "supervisorctl restart filebeat"
+}
+
+template {
   source = "/etc/filebeat/consul/template.ctmpl"
   destination = "/etc/filebeat/filebeat.yml"
   command = "supervisorctl restart filebeat"
