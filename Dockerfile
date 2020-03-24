@@ -9,9 +9,10 @@ ARG ALPINE_GLIBC_PACKAGE_VERSION
 # service environment
 ENV BUILD_ID=${BUILD_ID:-"1"} \
     SERVICE_KV_PATH="filebeat" \
-    CLUSTER_NAME="ecs-cluster" \
-    CONSUL_HTTP_ADDR="172.17.0.1:8500" \
-    SERVICE_ENV="stage" 
+    CLUSTER_NAME="as-stage-api" \
+    CONSUL_HTTP_ADDR="10.200.0.238:8500" \
+    SERVICE_ENV="as-stage" \
+    INDEX_PER_CLUSTER="true"
 
 # utilites version
 ENV FILEBEAT_VERSION=${FILEBEAT_VERSION:-"6.8.3"} \
@@ -40,7 +41,6 @@ RUN set -ex  && apk --no-cache add --virtual .build-dependencies wget ca-certifi
     -O /tmp/filebeat.tar.gz && \
     cd /tmp && tar xzvf filebeat.tar.gz && \
     cd filebeat-* && rm *.txt && rm *.md && cp -r * /etc/filebeat/ && \
-    cp /etc/filebeat/fields.yml /etc/filebeat/fields.reference.yml && \
     cd /tmp && rm -rf filebeat* && \
     ln -s /etc/filebeat/filebeat /usr/local/bin/filebeat && \
     chmod +x /etc/filebeat/provision/*.sh

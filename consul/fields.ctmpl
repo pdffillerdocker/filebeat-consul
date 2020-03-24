@@ -1,1 +1,0 @@
-{{ if keyExists "SERVICE_KV_PATH/config/fb_template" }}{{ key "SERVICE_KV_PATH/config/fb_template" }}{{else}}{{ file "/etc/filebeat/fields.reference.yml" }}{{end}}
