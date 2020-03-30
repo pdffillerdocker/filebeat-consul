@@ -11,7 +11,7 @@ ENV BUILD_ID=${BUILD_ID:-"1"} \
     SERVICE_KV_PATH="filebeat" \
     CLUSTER_NAME="ecs-cluster" \
     CONSUL_HTTP_ADDR="172.17.0.1:8500" \
-    SERVICE_ENV="stage"
+    SERVICE_ENV="stage" 
 
 # utilites version
 ENV FILEBEAT_VERSION=${FILEBEAT_VERSION:-"6.8.3"} \

@@ -26,6 +26,7 @@ setup.template:
     index.number_of_shards: {{key "SERVICE_KV_PATH/config/number_of_shards"}}{{end}}
   name: "SERVICE_ENV"
   pattern: "SERVICE_ENV-*"
+  fields: fields-custom.yml
 
 #================================ Logging =====================================
 logging.level: debug
