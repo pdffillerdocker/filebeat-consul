@@ -14,6 +14,8 @@ processors:
 name: "CLUSTER_NAME"
 tags: ["CLUSTER_NAME", "json"]
 
+{{if keyExists "SERVICE_KV_PATH/config/fb_registry_path"}}path.data: {{key "SERVICE_KV_PATH/config/fb_registry_path"}}{{end}}
+
 output.elasticsearch:
   enabled: true
   hosts: 
@@ -47,14 +49,24 @@ output.elasticsearch:
             docker.container.labels.filebeat.enable: "true"
         - equals:
             docker.container.labels.filebeat.index: "custom"
+    - index: "SERVICE_ENV-nginx-%{+yyyy.MM.dd}"
+      when:
+        contains:
+          fields.document_type: "nginx"
+    - index: "{{ if eq (env "INDEX_PER_CLUSTER") "true" }}CLUSTER_NAME{{else}}SERVICE_ENV{{end}}-%{[fields.index_prefix]}-%{+yyyy.MM.dd}"
 #### supports old fashioned log prospector type
     - index: "SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}"
       when.equals:
         prospector.type: "log"
 
+
 setup.template:
+  {{if keyExists "SERVICE_KV_PATH/config/number_of_shards"}}overwrite: true
+  settings:
+    index.number_of_shards: {{key "SERVICE_KV_PATH/config/number_of_shards"}}{{end}}
   name: "SERVICE_ENV"
   pattern: "SERVICE_ENV-*"
+  fields: fields-custom.yml
 
 #================================ Logging =====================================
 logging.level: {{ keyOrDefault "SERVICE_KV_PATH/config/debug" "info" }}

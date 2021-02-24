@@ -11,11 +11,11 @@ ENV BUILD_ID=${BUILD_ID:-"1"} \
     SERVICE_KV_PATH="filebeat" \
     CLUSTER_NAME="ecs-cluster" \
     CONSUL_HTTP_ADDR="172.17.0.1:8500" \
-    SERVICE_ENV="stage"
+    SERVICE_ENV="stage" 
 
 # utilites version
-ENV FILEBEAT_VERSION=${FILEBEAT_VERSION:-"6.7.1"} \
-    CONSUL_VERSION=${CONSUL_TEMPLATE_VERSION:-"0.22.0"} \
+ENV FILEBEAT_VERSION=${FILEBEAT_VERSION:-"6.8.3"} \
+    CONSUL_VERSION=${CONSUL_TEMPLATE_VERSION:-"0.18.1"} \
     ALPINE_GLIBC_PACKAGE_VERSION=${ALPINE_GLIBC_PACKAGE_VERSION:-"2.23-r1"} \
     ALPINE_GLIBC_BASE_URL="https://github.com/andyshinn/alpine-pkg-glibc/releases/download" \
     FILEBEAT_BASE_URL="https://artifacts.elastic.co/downloads/beats/filebeat" \

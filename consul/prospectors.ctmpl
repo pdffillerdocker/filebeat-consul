@@ -10,6 +10,7 @@
       - "*"
   
 {{ else }}
+
   paths:
   - {{ $pairs.path }}
 {{ end }}
@@ -17,7 +18,7 @@
    document_type: {{ $pairs.doc_type }}
    index_prefix: {{ with $pairs.index_prefix }}{{ $pairs.index_prefix }}{{ else }}filebeat{{ end }}
 
-{{ if $pairs.json }}
+{{if and ($pairs.json.Value) (or (eq ($pairs.json.Value | toLower) "true") (eq $pairs.json.Value "1") (eq ($pairs.json.Value | toLower) "yes") (eq ($pairs.json.Value | toLower) "y")) }}
   json:
     -json.keys_under_root: true
     -json.add_error_key: true

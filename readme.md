@@ -2,16 +2,28 @@
 Filebeat configuring via Consul
 
 ### Environment Variables
-| Name             | Description                                                                          | Default                |
-| ---------------- | ------------------------------------------------------------------------------------ | ---------------------- |
-| SERVICE_KV_PATH  | The path to filebeat folder with config KV in consul                                 | "filebeat"             |
-| CONSUL_TOKEN     | The consul acl token. See https://www.consul.io/docs/guides/acl.html#acl-agent-token |                        |
-| CONSUL_HTTP_ADDR | The consul URL                                                                       | http://172.17.0.1:8500 |
-| CLUSTER_NAME     | The additional subfolders in KV path for different filebit instances                 | ecs-cluster            |
-| SERVICE_ENV      | The additional prefix to elasticsearch indexname                                     | stage                  |
+| Name | Description | Default |
+|------|-------------|---------|
+| SERVICE_KV_PATH | The path to filebeat folder with config KV in consul |"filebeat" |
+| CONSUL_TOKEN | The consul acl token. See https://www.consul.io/docs/guides/acl.html#acl-agent-token | |
+| CONSUL_HTTP_ADDR | The consul URL | http://172.17.0.1:8500 |
+| CLUSTER_NAME | The additional subfolders in KV path for different filebit instances | ecs-cluster |
+| SERVICE_ENV | The additional prefix to elasticsearch indexname |stage|
+| INDEX_PER_CLUSTER | The additional prefix to elasticsearch indexname ||
 
 ### Mount Points
 /var/log/       logs
+
+### Index Template configuration
+| Name | Description | Default |
+|------|-------------|---------|
+| overwrite | Option to overwrite index template settings. Used if ```SERVICE_KV_PATH/config/number_of_shards``` set. ||
+| number_of_shards | Option to set number of shards per index. Used if ```SERVICE_KV_PATH/config/number_of_shards``` set. ||
+
+### Additional filebeat configuration
+| Name | Description | Default |
+|------|-------------|---------|
+| path.data | Option to set registry and meta.json directory, could be used to store filebeat state in mounted dir. Used if ```SERVICE_KV_PATH/config/fb_registry_path``` set. ||
 
 ### Visual diagram
 ![](https://raw.githubusercontent.com/pdffillerdocker/filebeat-consul/master/_docs/filebeat.png)
@@ -56,6 +68,7 @@ curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/config/es_port <
 | index_prefix | The elasticsearch index prefix. Result elasticsearch prefix like "SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}" | if type log: yes |         |
 | json         | Boolean value. Set true if log in json format                                                                          | yes              |         |
 | path         | The parsing file mask (for docker use: /var/lib/docker/containers)                                                     | yes              |         |
+
 
 ### Sample configure inputs (put consul KV via bash script)
 ```bash
