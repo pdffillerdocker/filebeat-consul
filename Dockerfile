@@ -30,11 +30,11 @@ RUN set -ex  && apk --no-cache add --virtual .build-dependencies wget ca-certifi
     wget "${ALPINE_GLIBC_BASE_URL}/${ALPINE_GLIBC_PACKAGE_VERSION}/${ALPINE_GLIBC_BASE_PACKAGE_FILENAME}" \
     "${ALPINE_GLIBC_BASE_URL}/${ALPINE_GLIBC_PACKAGE_VERSION}/${ALPINE_GLIBC_BIN_PACKAGE_FILENAME}" \
     "${ALPINE_GLIBC_BASE_URL}/${ALPINE_GLIBC_PACKAGE_VERSION}/${ALPINE_GLIBC_I18N_PACKAGE_FILENAME}" && \
-     apk add --no-cache --allow-untrusted "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
+    apk add --no-cache --allow-untrusted "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
     "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME" && \
-     /usr/glibc-compat/bin/localedef --force --inputfile POSIX --charmap UTF-8 C.UTF-8 || true \
-     && echo "export LANG=C.UTF-8" > /etc/profile.d/locale.sh && apk del glibc-i18n && \
-     apk del .build-dependencies && rm "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
+    /usr/glibc-compat/bin/localedef --force --inputfile POSIX --charmap UTF-8 C.UTF-8 || true \
+    && echo "export LANG=C.UTF-8" > /etc/profile.d/locale.sh && apk del glibc-i18n && \
+    apk del .build-dependencies && rm "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
     "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME" && \
     wget "${FILEBEAT_BASE_URL}/filebeat-${FILEBEAT_VERSION}-linux-x86_64.tar.gz" \
     -O /tmp/filebeat.tar.gz && \

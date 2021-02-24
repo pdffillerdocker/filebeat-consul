@@ -1,18 +1,45 @@
-{{range $key, $pairs := tree "SERVICE_KV_PATH/CLUSTER_NAME/" |byKey}}
+{{ range $key,$pairs := printf "SERVICE_KV_PATH/CLUSTER_NAME" | tree | explode }}
+{{ if $pairs.type }}
+- type: {{ $pairs.type }}{{ else }}
+- type: log {{ end }}
+{{ if  $pairs.type | contains "docker" }}
+  containers:
+    path: "{{ $pairs.path }}"
+    stream: "all"
+    ids:
+      - "*"
+  
+{{ else }}
 
-- type: log
   paths:
-  - {{$pairs.path.Value}}
+  - {{ $pairs.path }}
+{{ end }}
   fields:
-   document_type: {{$pairs.doc_type.Value}}
-   index_prefix: {{with $pairs.index_prefix.Value}}{{$pairs.index_prefix.Value}}{{else}}filebeat{{end}}
+   document_type: {{ $pairs.doc_type }}
+   index_prefix: {{ with $pairs.index_prefix }}{{ $pairs.index_prefix }}{{ else }}filebeat{{ end }}
 
-  {{if and ($pairs.json.Value) (or (eq ($pairs.json.Value | toLower) "true") (eq $pairs.json.Value "1") (eq ($pairs.json.Value | toLower) "yes") (eq ($pairs.json.Value | toLower) "y")) }}
+{{if and ($pairs.json.Value) (or (eq ($pairs.json.Value | toLower) "true") (eq $pairs.json.Value "1") (eq ($pairs.json.Value | toLower) "yes") (eq ($pairs.json.Value | toLower) "y")) }}
   json:
     -json.keys_under_root: true
     -json.add_error_key: true
     -json.message_key: message
-    {{else}}
-    {{end}}
+{{ end }}
   scan_frequency: 10s
-  {{end}}
+
+  processors:
+  # workaround for https://github.com/elastic/kibana/issues/26759
+  # when kibana fails to format a message from a log file 
+    - rename:
+         fields:
+            - from: "log"
+            - to: "message"
+  {{ if  $pairs.type | contains "docker" }}
+  # workaround when stdout and log files send to the same index (conflict of field type)
+    - rename:
+        fields:
+          - from: "json.level"
+            to: "json.level_name"
+        ignore_missing: true
+        fail_on_error: false 
+  {{ end }}
+{{ end }}

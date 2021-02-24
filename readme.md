@@ -29,25 +29,25 @@ Filebeat configuring via Consul
 ![](https://raw.githubusercontent.com/pdffillerdocker/filebeat-consul/master/_docs/filebeat.png)
 
 ### Configure the cleaner
-| Name | Description |
-|------|-------------|
+| Name     | Description                                                                      |
+| -------- | -------------------------------------------------------------------------------- |
 | logs_TTL | Time in min. If during the specified time the file is not changed, it is deleted |
 
-### Sample configure cleaner (put consul KV via bash script)
+#### Sample configure cleaner (put consul KV via bash script)
 ```bash
 #!/bin/bash
 
 SERVICE_KV_PATH="filebeat"
 CONSUL_SERVER_URL="http://localhost:8500"
 
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/config/logs_TTL <<< "180"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/config/logs_TTL <<< "180"
 ```
 
 ### Configure the output
-| Name | Description |
-|------|-------------|
+| Name    | Description              |
+| ------- | ------------------------ |
 | es_host | The elasticsearch addres |
-| es_port | The elasticsearch port |
+| es_port | The elasticsearch port   |
 
 ### Sample configure output (put consul KV via bash script)
 ```bash
@@ -56,17 +56,19 @@ curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/config/logs_TTL <
 SERVICE_KV_PATH="filebeat"
 CONSUL_SERVER_URL="http://localhost:8500"
 
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/config/es_host <<< "localhost"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/config/es_port <<< "9200"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/config/es_host <<< "localhost"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/config/es_port <<< "9200"
 ```
 
 ### Configure inputs
-| Name | Description |
-|------|-------------|
-| doc_type | The value for fileds document_type |
-| index_prefix | The elasticsearch index prefix. Result elasticsearch prefix like ```SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}``` or ```CLUSTER_NAME-%{[fields.index_prefix]}-%{+yyyy.MM.dd}``` if INDEX_PER_CLUSTER environment variable set to true. ```SERVICE_ENV-nginx-%{+yyyy.MM.dd}``` when document_type contains "nginx". |
-| json | Boolean value. Set true if log in json format |
-| path | The parsing file mask |
+| Name         | Description                                                                                                            | Mandatory        | Default |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------- | ---------------- | ------- |
+| type         | The Filebeat Input type. Example: docker                                                                               | no               | log     |
+| doc_type     | The value for fileds document_type                                                                                     | yes              |         |
+| index_prefix | The elasticsearch index prefix. Result elasticsearch prefix like "SERVICE_ENV-%{[fields.index_prefix]}-%{+yyyy.MM.dd}" | if type log: yes |         |
+| json         | Boolean value. Set true if log in json format                                                                          | yes              |         |
+| path         | The parsing file mask (for docker use: /var/lib/docker/containers)                                                     | yes              |         |
+
 
 ### Sample configure inputs (put consul KV via bash script)
 ```bash
@@ -76,26 +78,34 @@ CLUSTER_NAME="ecs-cluster"
 SERVICE_KV_PATH="filebeat"
 CONSUL_SERVER_URL="http://localhost:8500"
 
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-1-nginx-access/doc_type <<< "container-1-nginx-access"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-1-nginx-access/index_prefix <<< "nginx-access"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-1-nginx-access/json <<< "1"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-1-nginx-access/path <<< "/var/log/container_1/nginx/*.json"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-nginx-access/doc_type <<< "container-1-nginx-access"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-nginx-access/index_prefix <<< "nginx-access"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-nginx-access/json <<< "1"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-nginx-access/path <<< "/var/log/container_1/nginx/*.json"
 
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-1-nginx-error/doc_type <<< "container-1-nginx-error"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-1-nginx-error/index_prefix <<< "nginx-error"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-1-nginx-error/json <<< "0"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-1-nginx-error/path <<< "/var/log/container_1/nginx/*.log"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-nginx-error/doc_type <<< "container-1-nginx-error"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-nginx-error/index_prefix <<< "nginx-error"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-nginx-error/json <<< "0"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-nginx-error/path <<< "/var/log/container_1/nginx/*.log"
 
 
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-2-nginx-access/doc_type <<< "container-2-nginx-access"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-2-nginx-access/index_prefix <<< "nginx-access"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-2-nginx-access/json <<< "1"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-2-nginx-access/path <<< "/var/log/container_1/nginx/*.json"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-2-nginx-access/doc_type <<< "container-2-nginx-access"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-2-nginx-access/index_prefix <<< "nginx-access"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-2-nginx-access/json <<< "1"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-2-nginx-access/path <<< "/var/log/container_1/nginx/*.json"
 
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-2-nginx-error/doc_type <<< "container-2-nginx-error"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-2-nginx-error/index_prefix <<< "nginx-error"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-2-nginx-error/json <<< "0"
-curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/{SERVICE_KV_PATH}/{CLUSTER_NAME}/container-2-nginx-error/path <<< "/var/log/container_2/nginx/*.log"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-2-nginx-error/doc_type <<< "container-2-nginx-error"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-2-nginx-error/index_prefix <<< "nginx-error"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-2-nginx-error/json <<< "0"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-2-nginx-error/path <<< "/var/log/container_2/nginx/*.log"
+
+#### docker test 
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-nginx-docker/type <<< "docker"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-docker/doc_type <<< "container-1-nginx-docker"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-docker/index_prefix <<< "nginx-docker"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-docker/json <<< "1"
+curl -X PUT -d @- ${CONSUL_SERVER_URL}/v1/kv/${SERVICE_KV_PATH}/${CLUSTER_NAME}/container-1-docker/path <<< "/var/lib/docker/containers"
+
 ```
 
 # sample keys used filebeat-consul
@@ -129,11 +139,11 @@ curl --header "X-Consul-Token: 1234sampletoken" "http://localhost:8500/v1/kv/fil
 ```
 
 ### additional build parameters
-| Name | Description | Default |
-|------|-------------|---------|
-| FILEBEAT_VERSION | The filebeat version | 6.5.4 |
-| CONSUL_TEMPLATE_VERSION | The consul-template version | 0.18.1 |
-| ALPINE_GLIBC_PACKAGE_VERSION | The glibc version | 2.23-r1 |
+| Name                         | Description                 | Default |
+| ---------------------------- | --------------------------- | ------- |
+| FILEBEAT_VERSION             | The filebeat version        | 6.7.1   |
+| CONSUL_TEMPLATE_VERSION      | The consul-template version | 0.22.0  |
+| ALPINE_GLIBC_PACKAGE_VERSION | The glibc version           | 2.23-r1 |
 
 ### useful links
 [Filebeat Reference](https://www.elastic.co/guide/en/beats/filebeat/current/index.html)
