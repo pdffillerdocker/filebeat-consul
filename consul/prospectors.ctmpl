@@ -5,7 +5,7 @@
 {{ if  $pairs.type | contains "docker" }}
   containers:
     path: "{{ $pairs.path }}"
-    stream: "all"
+    stream: "{{ $pairs.stream }}"
     ids:
       - "*"
 {{ else }}
