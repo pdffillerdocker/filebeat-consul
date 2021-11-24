@@ -17,7 +17,7 @@ processors:
 
 #================================ General =====================================
 name: "CLUSTER_NAME"
-tags: ["CLUSTER_NAME", "json"]
+tags: ["CLUSTER_NAME"]
 
 output.logstash:
   enabled: true

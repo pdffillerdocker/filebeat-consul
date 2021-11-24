@@ -22,5 +22,8 @@
     -json.add_error_key: true
     -json.message_key: message
 {{ end }}
+{{ if $pairs.plaintext }}
+  tags: [ "plaintext" ]
+{{ end }}
   scan_frequency: 10s
 {{ end }}
